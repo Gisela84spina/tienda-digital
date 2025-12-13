@@ -43,7 +43,10 @@ export default function CarruselAdmin() {
   const handleAgregar = () => {
     if (!imagen || subiendo) return;
   
-    agregar(imagen);
+    agregar({
+      id: crypto.randomUUID(),
+      url: imagen
+    });
     setImagen("");
   };
   
