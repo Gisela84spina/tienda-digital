@@ -39,14 +39,17 @@ export default function CarruselAdmin() {
     }
   };
   
-  
   const handleAgregar = () => {
     if (!imagen || subiendo) return;
   
-    agregar(imagen);
+    agregar({
+      id: Date.now(),
+      url: imagen
+    });
+  
     setImagen("");
-     
   };
+  
   
 
   const limiteAlcanzado = imagenes.length >= 3;

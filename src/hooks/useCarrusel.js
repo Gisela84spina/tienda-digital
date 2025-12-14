@@ -6,7 +6,10 @@ export function useCarrusel() {
   useEffect(() => {
     try {
       const data = JSON.parse(localStorage.getItem("carrusel")) || [];
-      setImagenes(data.filter(img => img?.url));
+      setImagenes(
+        data.filter(img => typeof img === "object" && img.url)
+      );
+      
     } catch {
       setImagenes([]);
     }

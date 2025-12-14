@@ -9,9 +9,12 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductPage from "./pages/ProductPage";
+import { useCarrusel } from "./hooks/useCarrusel";
+
 
 function App() {
   const WHATSAPP_NUM = "5492364539044"; // numero de celular para wsp
+  const carrusel = useCarrusel();
 
   const [adminLogueado, setAdminLogueado] = useState(false);
   const [productos, setProductos] = useState([]);
@@ -163,11 +166,12 @@ useEffect(() => {
       />
 
       <main className="flex-1">
-        <Routes>
-          <Route 
-            path="/" 
-            element={<Home productos={productos} agregarAlCarrito={agregarAlCarrito} />} 
-          />
+      <Routes>
+         <Route 
+           path="/" 
+           element={<Home productos={productos} agregarAlCarrito={agregarAlCarrito} />} 
+       />
+
           <Route
             path="/producto/:id"
             element={<ProductPage agregarAlCarrito={agregarAlCarrito} />}
