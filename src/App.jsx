@@ -14,7 +14,7 @@ import { useCarrusel } from "./hooks/useCarrusel";
 
 function App() {
   const WHATSAPP_NUM = "5492364539044"; // numero de celular para wsp
-  const carrusel = useCarrusel();
+  
 
   const [adminLogueado, setAdminLogueado] = useState(false);
   const [productos, setProductos] = useState([]);
@@ -165,7 +165,8 @@ useEffect(() => {
         cartCount={carrito.reduce((sum, item) => sum + (item.cantidad ?? 1), 0)}
       />
 
-      <main className="flex-1">
+    <main className="flex-1 w-full overflow-x-hidden">
+
       <Routes>
          <Route 
            path="/" 
