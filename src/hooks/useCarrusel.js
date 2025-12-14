@@ -5,7 +5,9 @@ export function useCarrusel() {
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("carrusel")) || [];
-    setImagenes(data);
+    setImagenes(
+      data.filter(img => typeof img === "object" && img.url)
+    );
   }, []);
 
   const guardar = (lista) => {
@@ -18,27 +20,14 @@ export function useCarrusel() {
       ...imagenes,
       {
         id: crypto.randomUUID(),
-        url,
-        activo: true
+        url
       }
     ]);
   };
 
-  const desactivar = (id) => {
-    guardar(
-      imagenes.map(img =>
-        img.id === id ? { ...img, activo: false } : img
-      )
-    );
+  const eliminar = (id) => {
+    guardar(imagenes.filter(img => img.id !== id));
   };
 
-  const reactivar = (id) => {
-    guardar(
-      imagenes.map(img =>
-        img.id === id ? { ...img, activo: true } : img
-      )
-    );
-  };
-
-  return { imagenes, agregar, desactivar, reactivar };
+  return { imagenes, agregar, eliminar };
 }

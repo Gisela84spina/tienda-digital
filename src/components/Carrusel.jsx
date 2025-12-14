@@ -4,7 +4,8 @@ import { useCarrusel } from "../hooks/useCarrusel";
 export default function Carrusel() {
   const { imagenes } = useCarrusel();
 
-  const activas = imagenes.filter(img => img && img.url);
+  const activas = imagenes.filter(img => img?.url && img.activo !== false);
+
 
 
   const [index, setIndex] = useState(0);
