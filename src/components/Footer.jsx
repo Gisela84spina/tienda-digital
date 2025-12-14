@@ -30,13 +30,7 @@ export default function Footer() {
                 Inicio
               </Link>
             </li>
-            <li>
-              <Link to="/#buscador" className="hover:text-white transition">
-              🔍 Buscar
-  
-
-              </Link>
-            </li>
+            
             <li>
               <Link to="/cart" className="hover:text-white transition">
                 Carrito
@@ -60,7 +54,7 @@ export default function Footer() {
     href="https://www.google.com/maps/search/?api=1&query=Almirante+Brown+1171,+Junín,+Buenos+Aires,+Argentina"
     target="_blank"
     rel="noopener noreferrer"
-    className="hover:text-gray-900 transition"
+    className="hover:text-blue-300 transition"
   >
     Almirante Brown 1171, Junín, Buenos Aires<br />
     Argentina
