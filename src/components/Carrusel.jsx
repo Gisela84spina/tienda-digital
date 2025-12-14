@@ -30,6 +30,7 @@ export default function Carrusel() {
   return (
     <div className="w-full h-64 mb-10 overflow-hidden rounded-xl relative">
       <img
+      key={activas[index].id}
         src={activas[index].url}
         className="w-full h-full object-cover transition-all duration-500"
         alt="Carrusel"
