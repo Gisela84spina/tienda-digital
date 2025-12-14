@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 
 export function useCarrusel() {
@@ -15,19 +14,31 @@ export function useCarrusel() {
   };
 
   const agregar = (url) => {
-    const nueva = { id: Date.now(), url, active: true };
-    guardar([...imagenes, nueva]);
+    guardar([
+      ...imagenes,
+      {
+        id: crypto.randomUUID(),
+        url,
+        activo: true
+      }
+    ]);
   };
 
-  const eliminar = (img) => {
-    guardar([...imagenes, img]);
-  };
-
-  const toggle = (id) => {
+  const desactivar = (id) => {
     guardar(
-      imagenes.filter(img => img.id !== id
-      ));
+      imagenes.map(img =>
+        img.id === id ? { ...img, activo: false } : img
+      )
+    );
   };
 
-  return { imagenes, agregar, eliminar };
+  const reactivar = (id) => {
+    guardar(
+      imagenes.map(img =>
+        img.id === id ? { ...img, activo: true } : img
+      )
+    );
+  };
+
+  return { imagenes, agregar, desactivar, reactivar };
 }

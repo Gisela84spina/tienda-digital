@@ -19,18 +19,16 @@ export default function Carrusel() {
     return () => clearInterval(interval);
   }, [activas.length]);
 
-  useEffect(() => {
-    if (index >= activas.length) {
-      setIndex(0);
-    }
-  }, [activas.length]);
+  
 
   if (activas.length === 0) return null;
+  if (!activas[index]) return null;
+
 
   return (
     <div className="w-full h-64 mb-10 overflow-hidden rounded-xl relative">
       <img
-      key={activas[index].id}
+     
         src={activas[index].url}
         className="w-full h-full object-cover transition-all duration-500"
         alt="Carrusel"
