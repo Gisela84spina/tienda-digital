@@ -6,11 +6,12 @@ export default function AgregarProducto({ agregarProducto }) {
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
   const [imagen, setImagen] = useState("");
-  const [descripcion, setDescripcion] = useState("");
+  
   const navigate = useNavigate();
   const CLOUD_NAME = "dy2lgqgk6";
   const UPLOAD_PRESET = "tienda_upload";
   const [subiendo, setSubiendo] = useState(false);
+  const [categoria, setCategoria] = useState("");
 
 
 
@@ -64,6 +65,11 @@ export default function AgregarProducto({ agregarProducto }) {
       alert("Esperá a que termine de subir la imagen");
       return;
     }
+    if (!categoria) {
+      alert("Seleccioná una categoría");
+      return;
+    }
+    
     
 
   
@@ -72,7 +78,8 @@ export default function AgregarProducto({ agregarProducto }) {
       nombre,
       precio: Number(precio),
       imagen,
-      descripcion,
+      categoria,
+      eliminado: false,
     };
   
     agregarProducto(nuevoProducto);
@@ -81,13 +88,14 @@ export default function AgregarProducto({ agregarProducto }) {
     setNombre("");
     setPrecio("");
     setImagen("");
-    setDescripcion("");
+    setCategoria("");
+    
   
     alert("Producto agregado con éxito");
   
   
     // ACÁ vamos a agregar la lógica
-    console.log("Producto listo para agregar:", { nombre, precio, imagen, descripcion });
+    console.log("Producto listo para agregar:", { nombre, precio, imagen, categoria });
     navigate("/");
   
 };
@@ -139,15 +147,19 @@ export default function AgregarProducto({ agregarProducto }) {
 
           </div>
           <div>
-            <label className="block font-semibold mb-1">Descripción:</label>
-            <textarea
-              className="w-full p-2 border rounded"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              rows="4"
-              required
-            ></textarea>
-          </div>
+  <label className="block font-semibold mb-1">Categoría:</label>
+  <select
+    className="w-full p-2 border rounded"
+    value={categoria}
+    onChange={(e) => setCategoria(e.target.value)}
+    required
+  >
+    <option value="">Seleccionar categoría</option>
+    <option value="ropa">Ropa</option>
+    <option value="calzado">Calzado</option>
+    <option value="accesorios">Accesorios</option>
+  </select>
+</div>
 
 
           <button
