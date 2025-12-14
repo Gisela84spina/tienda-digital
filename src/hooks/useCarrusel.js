@@ -19,17 +19,15 @@ export function useCarrusel() {
     guardar([...imagenes, nueva]);
   };
 
-  const eliminar = (id) => {
-    guardar(imagenes.filter(img => img.id !== id));
+  const eliminar = (img) => {
+    guardar([...imagenes, img]);
   };
 
   const toggle = (id) => {
     guardar(
-      imagenes.map(img =>
-        img.id === id ? { ...img, active: !img.active } : img
-      )
-    );
+      imagenes.filter(img => img.id !== id
+      ));
   };
 
-  return { imagenes, agregar, eliminar, toggle };
+  return { imagenes, agregar, eliminar };
 }
