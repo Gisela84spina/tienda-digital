@@ -47,6 +47,7 @@ export default function Home({ productos, agregarAlCarrito }) {
       <div className="filters flex gap-4 mb-6">
         {/* Buscador */}
         <input
+          id="buscador"
           type="text"
           placeholder="Buscar producto..."
           value={searchTerm}

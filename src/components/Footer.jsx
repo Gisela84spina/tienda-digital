@@ -31,8 +31,10 @@ export default function Footer() {
               </Link>
             </li>
             <li>
-              <Link to="/" className="hover:text-white transition">
-                Productos
+              <Link to="/#buscador" className="hover:text-white transition">
+              🔍 Buscar
+  
+
               </Link>
             </li>
             <li>
@@ -53,14 +55,18 @@ export default function Footer() {
               Atención personalizada
             </li>
             <li>
-              <a
-                href="https://wa.me/5492364539044"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-green-400 transition"
-              >
-                WhatsApp directo
-              </a>
+            <p className="text-sm text-gray-500 leading-relaxed">
+  <a
+    href="https://www.google.com/maps/search/?api=1&query=Almirante+Brown+1171,+Junín,+Buenos+Aires,+Argentina"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="hover:text-gray-900 transition"
+  >
+    Almirante Brown 1171, Junín, Buenos Aires<br />
+    Argentina
+  </a>
+</p>
+
             </li>
           </ul>
         </div>
