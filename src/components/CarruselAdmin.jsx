@@ -59,7 +59,8 @@ export default function CarruselAdmin() {
       <h1 className="text-2xl font-bold mb-6">Carrusel - Administrar imágenes</h1>
 
       {/* AGREGAR IMAGEN */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
+
       <input
   type="file"
   accept="image/*"
@@ -71,7 +72,7 @@ export default function CarruselAdmin() {
 {imagen && (
   <img
     src={imagen}
-    className="w-full h-32 object-cover rounded mb-3"
+    className="w-full sm:w-48 h-32 object-cover rounded mb-3"
     alt="preview"
   />
 )}

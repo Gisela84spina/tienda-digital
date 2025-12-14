@@ -108,17 +108,23 @@ useEffect(() => {
     if (carrito.length === 0) return;
   
     const items = carrito
-    .map(item => 
-      `• ${item.nombre}\n  Cant: ${item.cantidad}\n  Unit: $${item.precio}\n  Subtotal: $${item.precio * item.cantidad}\n  Img: ${item.imagen}`
-    )
-    .join("\n\n");
+      .map(item => 
+  `🛍️ ${item.nombre}
+  🆔 ID: ${item.id}
+  📦 Cantidad: ${item.cantidad}
+  💲 Precio unitario: $${item.precio}
+  💰 Subtotal: $${item.precio * item.cantidad}
+  🖼️ Imagen:
+  ${item.imagen}`
+      )
+      .join("\n\n----------------------\n\n");
   
-  const mensaje = `Hola! Me gustaría realizar este pedido:\n\n${items}\n\nTotal: $${total}`;
+    const mensaje = `Hola! Quiero realizar este pedido:\n\n${items}\n\n🧾 Total: $${total}`;
   
-  const url = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensaje)}`;
-  window.open(url, "_blank");
-  
-}  
+    const url = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
+  };
+   
   
   
 

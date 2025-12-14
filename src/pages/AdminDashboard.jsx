@@ -24,10 +24,11 @@ export default function AdminDashboard({
   }, []);
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex flex-col md:flex-row">
 
       {/* SIDEBAR */}
-      <aside className="w-64 bg-gray-900 text-white p-6 space-y-6">
+      <aside className="hidden md:block w-64 bg-gray-900 text-white p-6 space-y-6">
+
         <h2 className="text-2xl font-bold">Admin ⚙️</h2>
 
         <nav className="flex flex-col space-y-3 text-lg">
@@ -65,7 +66,7 @@ export default function AdminDashboard({
       </aside>
 
       {/* CONTENIDO */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 sm:p-8">
         <AdminRoutes
           productos={productos}
           agregarProducto={agregarProducto}
