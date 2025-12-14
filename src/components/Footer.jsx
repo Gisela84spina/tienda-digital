@@ -1,63 +1,107 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="w-full bg-gradient-to-b from-gray-900 to-black text-gray-300 mt-20 shadow-2xl">
+    <footer className="w-full bg-gradient-to-b from-gray-900 to-black text-gray-300 mt-20">
       
-      {/* Contenedor principal */}
-      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-12">
+      {/* CONTENEDOR */}
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 gap-12 md:grid-cols-4">
 
-        {/* Marca */}
+        {/* MARCA */}
         <div>
           <h2 className="text-2xl font-bold text-white tracking-wide">
             Tienda Digital
           </h2>
           <p className="mt-4 text-sm text-gray-400 leading-relaxed">
-            Tu espacio online hecho a medida.  
-            Simple, rápido y confiable — como un e-commerce real.
+            E-commerce simple, funcional y directo.  
+            Comprá fácil, consultá rápido y recibí atención real.
           </p>
         </div>
 
-        {/* Navegación */}
+        {/* NAVEGACIÓN */}
         <div>
           <h3 className="text-white font-semibold text-lg mb-4 border-b border-gray-700 pb-2">
             Navegación
           </h3>
           <ul className="flex flex-col gap-2 text-sm">
-            <li><a href="#" className="hover:text-white transition">Inicio</a></li>
-            <li><a href="#" className="hover:text-white transition">Productos</a></li>
-            <li><a href="#" className="hover:text-white transition">Ofertas</a></li>
-            <li><a href="#" className="hover:text-white transition">Carrito</a></li>
+            <li>
+              <Link to="/" className="hover:text-white transition">
+                Inicio
+              </Link>
+            </li>
+            <li>
+              <Link to="/" className="hover:text-white transition">
+                Productos
+              </Link>
+            </li>
+            <li>
+              <Link to="/cart" className="hover:text-white transition">
+                Carrito
+              </Link>
+            </li>
           </ul>
         </div>
 
-        {/* Ayuda */}
+        {/* CONTACTO */}
         <div>
           <h3 className="text-white font-semibold text-lg mb-4 border-b border-gray-700 pb-2">
-            Ayuda
+            Contacto
           </h3>
           <ul className="flex flex-col gap-2 text-sm">
-            <li><a href="#" className="hover:text-white transition">Preguntas frecuentes</a></li>
-            <li><a href="#" className="hover:text-white transition">Envíos y seguimiento</a></li>
-            <li><a href="#" className="hover:text-white transition">Devoluciones</a></li>
-            <li><a href="#" className="hover:text-white transition">Atención al cliente</a></li>
+            <li className="text-gray-400">
+              Atención personalizada
+            </li>
+            <li>
+              <a
+                href="https://wa.me/5492364539044"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-green-400 transition"
+              >
+                WhatsApp directo
+              </a>
+            </li>
           </ul>
         </div>
 
-        {/* Redes Sociales */}
+        {/* REDES */}
         <div>
           <h3 className="text-white font-semibold text-lg mb-4 border-b border-gray-700 pb-2">
-            Seguinos
+            Redes
           </h3>
+
           <div className="flex gap-5 text-2xl">
-            <a href="#" className="hover:text-white hover:scale-110 transition-transform duration-200">
+            {/* Facebook */}
+            <a
+              href="#" // pegá acá tu link real
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="hover:text-white hover:scale-110 transition-transform"
+            >
               <FaFacebookF />
             </a>
-            <a href="#" className="hover:text-white hover:scale-110 transition-transform duration-200">
+
+            {/* Instagram */}
+            <a
+              href="#" // pegá acá tu link real
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="hover:text-white hover:scale-110 transition-transform"
+            >
               <FaInstagram />
             </a>
-            <a href="#" className="hover:text-white hover:scale-110 transition-transform duration-200">
+
+            {/* WhatsApp */}
+            <a
+              href="https://wa.me/5492364539044"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="WhatsApp"
+              className="hover:text-green-400 hover:scale-110 transition-transform"
+            >
               <FaWhatsapp />
             </a>
           </div>
@@ -65,13 +109,14 @@ const Footer = () => {
 
       </div>
 
-      {/* Línea final */}
-      <div className="border-t border-gray-800 text-center py-5 text-sm text-gray-500">
-        © {new Date().getFullYear()} Tienda Digital — Todos los derechos reservados.
+      {/* LÍNEA FINAL */}
+      <div className="border-t border-gray-800 text-center py-5 text-xs text-gray-500">
+        © {new Date().getFullYear()} Tienda Digital · Hecho por Gise  
+        <div className="mt-1">
+          Última actualización: {new Date().toLocaleDateString()}
+        </div>
       </div>
 
     </footer>
   );
-};
-
-export default Footer;
+}
