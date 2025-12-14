@@ -4,8 +4,12 @@ export function useCarrusel() {
   const [imagenes, setImagenes] = useState([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("carrusel")) || [];
-    
+    try {
+      const data = JSON.parse(localStorage.getItem("carrusel")) || [];
+      setImagenes(data.filter(img => img?.url));
+    } catch {
+      setImagenes([]);
+    }
   }, []);
 
   const guardar = (lista) => {
@@ -13,14 +17,8 @@ export function useCarrusel() {
     localStorage.setItem("carrusel", JSON.stringify(lista));
   };
 
-  const agregar = (url) => {
-    guardar([
-      ...imagenes,
-      {
-        id: crypto.randomUUID(),
-        url
-      }
-    ]);
+  const agregar = (img) => {
+    guardar([...imagenes, img]);
   };
 
   const eliminar = (id) => {
