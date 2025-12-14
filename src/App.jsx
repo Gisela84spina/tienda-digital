@@ -115,7 +115,7 @@ useEffect(() => {
   💲 Precio unitario: $${item.precio}
   💰 Subtotal: $${item.precio * item.cantidad}
   🖼️ Imagen:
-  ${item.imagen}`
+  ${item.imagen || "Sin imagen"}`
       )
       .join("\n\n----------------------\n\n");
   

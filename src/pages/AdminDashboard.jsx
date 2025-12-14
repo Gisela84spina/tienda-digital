@@ -27,7 +27,9 @@ export default function AdminDashboard({
     <div className="min-h-screen flex flex-col md:flex-row">
 
       {/* SIDEBAR */}
-      <aside className="hidden md:block w-64 bg-gray-900 text-white p-6 space-y-6">
+      <aside className="w-full md:w-64 bg-gray-900 text-white p-4 
+      md:p-6 max-h-screen overflow-y-auto
+ ">
 
         <h2 className="text-2xl font-bold">Admin ⚙️</h2>
 
