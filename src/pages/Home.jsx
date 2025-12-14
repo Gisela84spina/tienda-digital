@@ -44,22 +44,24 @@ export default function Home({ productos, agregarAlCarrito }) {
       </h1>
 
       {/* --- FILTROS UI --- */}
-      <div className="filters flex gap-4 mb-6">
+      <div className="filters flex flex-wrap gap-4 mb-6">
         {/* Buscador */}
-        <input
+        <input className="border p-2 rounded w-full sm:w-auto"
+
           
           type="text"
           placeholder="Buscar producto..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border p-2 rounded"
+          
         />
 
         {/* Categorías */}
-        <select
+        <select className="border p-2 rounded w-full sm:w-auto"
+
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border p-2 rounded"
+          
         >
           <option value="all">Todas las categorías</option>
           <option value="ropa">Ropa</option>
@@ -68,10 +70,11 @@ export default function Home({ productos, agregarAlCarrito }) {
         </select>
 
         {/* Precio */}
-        <select
+        <select className="border p-2 rounded w-full sm:w-auto"
+
           value={sortByPrice}
           onChange={(e) => setSortByPrice(e.target.value)}
-          className="border p-2 rounded"
+        
         >
           <option value="">Ordenar por precio</option>
           <option value="asc">Precio menor a mayor</option>
