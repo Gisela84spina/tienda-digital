@@ -1,29 +1,53 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
 
-export default function VerProductos({ productos, eliminarProducto, restaurarProducto }) {
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
+
+export default function VerProductos() {
+  const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
-  const [filtroEstado, setFiltroEstado] = useState("activos"); 
+  const [filtroEstado, setFiltroEstado] = useState("activos");
   const [ordenPrecio, setOrdenPrecio] = useState("ninguno");
 
-  // 🔎 Filtrar por búsqueda
-  const filtradosPorBusqueda = productos.filter((p) =>
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  const cargarProductos = async () => {
+    const snap = await getDocs(collection(db, "productos"));
+    const lista = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      eliminado: doc.data().eliminado ?? false,
+    }));
+    setProductos(lista);
+  };
 
-  // 🚦 Filtrar por estado
-  const filtradosPorEstado = filtradosPorBusqueda.filter((p) => {
-    if (filtroEstado === "activos") return !p.eliminado;
-    if (filtroEstado === "eliminados") return p.eliminado;
-    return true; // todos
-  });
+  useEffect(() => {
+    cargarProductos();
+  }, []);
 
-  // 📊 Orden por precio
-  const ordenados = [...filtradosPorEstado].sort((a, b) => {
-    if (ordenPrecio === "asc") return a.precio - b.precio;
-    if (ordenPrecio === "desc") return b.precio - a.precio;
-    return 0;
-  });
+  const eliminarProducto = async (id) => {
+    await updateDoc(doc(db, "productos", id), { eliminado: true });
+    cargarProductos();
+  };
+
+  const restaurarProducto = async (id) => {
+    await updateDoc(doc(db, "productos", id), { eliminado: false });
+    cargarProductos();
+  };
+
+  const ordenados = productos
+    .filter(p =>
+      p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+    )
+    .filter(p => {
+      if (filtroEstado === "activos") return !p.eliminado;
+      if (filtroEstado === "eliminados") return p.eliminado;
+      return true;
+    })
+    .sort((a, b) => {
+      if (ordenPrecio === "asc") return a.precio - b.precio;
+      if (ordenPrecio === "desc") return b.precio - a.precio;
+      return 0;
+    });
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -33,21 +57,18 @@ export default function VerProductos({ productos, eliminarProducto, restaurarPro
           Gestión de Productos 📦
         </h1>
 
-        {/* 🔍 Buscador + Filtros */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-
+        <div className="flex gap-4 mb-6 flex-wrap">
           <input
-            type="text"
-            placeholder="Buscar producto..."
-            className="w-full md:w-1/3 p-2 border rounded"
+            placeholder="Buscar..."
+            className="p-2 border rounded"
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={e => setBusqueda(e.target.value)}
           />
 
           <select
             className="p-2 border rounded"
             value={filtroEstado}
-            onChange={(e) => setFiltroEstado(e.target.value)}
+            onChange={e => setFiltroEstado(e.target.value)}
           >
             <option value="activos">Activos</option>
             <option value="eliminados">Eliminados</option>
@@ -57,110 +78,66 @@ export default function VerProductos({ productos, eliminarProducto, restaurarPro
           <select
             className="p-2 border rounded"
             value={ordenPrecio}
-            onChange={(e) => setOrdenPrecio(e.target.value)}
+            onChange={e => setOrdenPrecio(e.target.value)}
           >
-            <option value="ninguno">Ordenar por precio</option>
-            <option value="asc">Menor a mayor</option>
-            <option value="desc">Mayor a menor</option>
+            <option value="ninguno">Precio</option>
+            <option value="asc">↑</option>
+            <option value="desc">↓</option>
           </select>
-
         </div>
 
-        {/* 📋 Tabla */}
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-3 text-left">Imagen</th>
-                <th className="border p-3 text-left">Nombre</th>
-                <th className="border p-3 text-left">Precio</th>
-                <th className="border p-3 text-left">Estado</th>
-                <th className="border p-3 text-center">Acciones</th>
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gray-200">
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {ordenados.map(p => (
+              <tr key={p.id} className="border">
+                <td>
+                  {p.imagen
+                    ? <img src={p.imagen} className="w-16 h-16 object-cover" />
+                    : "—"}
+                </td>
+                <td>{p.nombre}</td>
+                <td>${p.precio}</td>
+                <td>{p.eliminado ? "Eliminado" : "Activo"}</td>
+                <td className="flex gap-2">
+                  {!p.eliminado && (
+                    <Link
+                      to={`/admin/editar/${p.id}`}
+                      className="bg-blue-600 text-white px-2 rounded"
+                    >
+                      Editar
+                    </Link>
+                  )}
+
+                  {!p.eliminado ? (
+                    <button
+                      onClick={() => eliminarProducto(p.id)}
+                      className="bg-red-600 text-white px-2 rounded"
+                    >
+                      Eliminar
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => restaurarProducto(p.id)}
+                      className="bg-green-600 text-white px-2 rounded"
+                    >
+                      Restaurar
+                    </button>
+                  )}
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {ordenados.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="text-center p-4 text-gray-500">
-                    No se encontraron productos.
-                  </td>
-                </tr>
-              ) : (
-                ordenados.map((p) => (
-                  <tr key={p.id} className="border hover:bg-gray-50">
-
-                    <td className="p-3">
-                    {p.imagen ? (
-  <img
-    src={p.imagen}
-    alt={p.nombre}
-    className="w-16 h-16 object-cover rounded"
-  />
-) : (
-  <div className="w-16 h-16 bg-gray-300 rounded flex items-center justify-center text-xs text-gray-600">
-    Sin imagen
-  </div>
-)}
-
-                    </td>
-
-                    <td className="p-3">{p.nombre}</td>
-                    <td className="p-3">${p.precio}</td>
-
-                    <td className="p-3">
-                      {p.eliminado ? (
-                        <span className="text-red-600 font-semibold">Eliminado</span>
-                      ) : (
-                        <span className="text-green-600 font-semibold">Activo</span>
-                      )}
-                    </td>
-
-                    {/* Botones */}
-                    <td className="p-3 flex gap-2 justify-center">
-
-                      {!p.eliminado && (
-                        <Link
-                          to={`/admin/editar/${p.id}`}
-                          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                        >
-                          Editar
-                        </Link>
-                      )}
-
-                      {!p.eliminado ? (
-                        <button
-                          onClick={() => {
-                            if (window.confirm(`¿Eliminar "${p.nombre}"?`))
-                              eliminarProducto(p.id);
-                          }}
-                          className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                        >
-                          Eliminar
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => restaurarProducto(p.id)}
-                          className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                        >
-                          Restaurar
-                        </button>
-                      )}
-
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <Link
-          to="/admin"
-          className="mt-6 block bg-gray-700 text-white py-2 rounded-lg text-center font-semibold hover:bg-gray-800"
-        >
-          Volver al panel admin
-        </Link>
+            ))}
+          </tbody>
+        </table>
 
       </div>
     </div>

@@ -1,6 +1,6 @@
 
 import { Routes, Route } from "react-router-dom";
-
+import ProtectedRoute from "../components/ProtectedRoute";
 import VerProductos from "../pages/VerProductos";
 import AgregarProducto from "../pages/AgregarProducto";
 import EditarProducto from "../pages/EditarProducto";
@@ -13,6 +13,7 @@ export default function AdminRoutes({
   restaurarProducto,
 }) {
   return (
+    <ProtectedRoute>
     <Routes>
       <Route
         path="/"
@@ -46,5 +47,6 @@ export default function AdminRoutes({
         element={<CarruselAdmin />}
       />
     </Routes>
+    </ProtectedRoute>
   );
 }
