@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Link } from "react-router-dom";
 
+import Carrusel from "../components/Carrusel";
 
 
 export default function Home({ productos, agregarAlCarrito }) {
@@ -36,7 +37,7 @@ export default function Home({ productos, agregarAlCarrito }) {
     <div className="p-6">
       
 
- 
+      <Carrusel />
 
       <h1 className="text-gray-900 font-semibold text-2xl mb-6">
         Productos

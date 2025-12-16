@@ -91,11 +91,18 @@ export default function VerProductos({ productos, eliminarProducto, restaurarPro
                   <tr key={p.id} className="border hover:bg-gray-50">
 
                     <td className="p-3">
-                      <img
-                        src={p.imagen}
-                        alt={p.nombre}
-                        className="w-16 h-16 object-cover rounded"
-                      />
+                    {p.imagen ? (
+  <img
+    src={p.imagen}
+    alt={p.nombre}
+    className="w-16 h-16 object-cover rounded"
+  />
+) : (
+  <div className="w-16 h-16 bg-gray-300 rounded flex items-center justify-center text-xs text-gray-600">
+    Sin imagen
+  </div>
+)}
+
                     </td>
 
                     <td className="p-3">{p.nombre}</td>

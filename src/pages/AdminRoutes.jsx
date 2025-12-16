@@ -1,23 +1,24 @@
+
 import { Routes, Route } from "react-router-dom";
-import VerProductos from "./VerProductos";
-import AgregarProducto from "./AgregarProducto";
-import EditarProducto from "./EditarProducto";
-import DashboardInicio from "./DashboardInicio";
+
+import VerProductos from "../pages/VerProductos";
+import AgregarProducto from "../pages/AgregarProducto";
+import EditarProducto from "../pages/EditarProducto";
 import CarruselAdmin from "../components/CarruselAdmin";
-
-
 
 export default function AdminRoutes({
   productos,
   agregarProducto,
-  actualizarProducto,
   eliminarProducto,
-  restaurarProducto
+  restaurarProducto,
 }) {
   return (
     <Routes>
-      <Route index element={<DashboardInicio productos={productos}/>} 
-/>
+      <Route
+        path="/"
+        element={<h1 className="text-2xl font-bold">Panel administrador</h1>}
+      />
+
       <Route
         path="productos"
         element={
@@ -34,17 +35,16 @@ export default function AdminRoutes({
         element={<AgregarProducto agregarProducto={agregarProducto} />}
       />
 
+      
       <Route
         path="editar/:id"
-        element={
-          <EditarProducto
-            productos={productos}
-            actualizarProducto={actualizarProducto}
-          />
-        }
+        element={<EditarProducto />}
       />
-      <Route path="carrusel" element={<CarruselAdmin />} />
 
+      <Route
+        path="carrusel"
+        element={<CarruselAdmin />}
+      />
     </Routes>
   );
 }

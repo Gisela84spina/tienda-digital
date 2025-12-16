@@ -10,14 +10,73 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductPage from "./pages/ProductPage";
 import { useCarrusel } from "./hooks/useCarrusel";
+import { db } from "./firebase";
+
+import { 
+  collection,
+  getDocs, 
+  addDoc, 
+  updateDoc, 
+  doc 
+} from "firebase/firestore";
+
 
 
 function App() {
   const WHATSAPP_NUM = "5492364539044"; // numero de celular para wsp
+  const [productos, setProductos] = useState([]);
+
+ 
+  // -------------------------
+  // CARGAR PRODUCTOS
+  // -------------------------
+  const cargarProductos = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "productos"));
+      const lista = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        eliminado: doc.data().eliminado ?? false,
+      }));
   
+      setProductos(lista);
+    } catch (error) {
+      console.error("Error cargando productos:", error);
+    }
+  };
+
+  const actualizarProductoFirebase = async (producto) => {
+    try {
+      const ref = doc(db, "productos", producto.id);
+      await updateDoc(ref, {
+        nombre: producto.nombre,
+        precio: producto.precio,
+        imagen: producto.imagen,
+        descripcion: producto.descripcion ?? "",
+        categoria: producto.categoria ?? ""
+      });
+      cargarProductos();
+    } catch (error) {
+      console.error("Error actualizando producto:", error);
+    }
+  };
+  
+  
+  
+  const agregarProducto = async (producto) => {
+    try {
+      await addDoc(collection(db, "productos"), {
+        ...producto,
+        eliminado: false,
+      });
+      cargarProductos();
+    } catch (error) {
+      console.error("Error agregando producto:", error);
+    }
+  };
 
   const [adminLogueado, setAdminLogueado] = useState(false);
-  const [productos, setProductos] = useState([]);
+  
   const [carrito, setCarrito] = useState([]);
   const [total, setTotal] = useState(0);
 
@@ -128,36 +187,29 @@ useEffect(() => {
   
   
 
-  // -------------------------
-  // CARGAR PRODUCTOS
-  // -------------------------
-  useEffect(() => {
-    const guardados = localStorage.getItem("productos");
-    if (guardados) {
-      const parsed = JSON.parse(guardados);
-
-      const normalizados = parsed.map(p => ({
-        ...p,
-        eliminado: p.eliminado ?? false,
-      }));
-
-      setProductos(normalizados);
-      localStorage.setItem("productos", JSON.stringify(normalizados));
-    } else {
-      const ejemplo = [
-        { id: 1, nombre: "remera", precio: 1500, categoria: "ropa", imagen: "/img/remera.png", eliminado: false },
-        { id: 2, nombre: "zapatilla", precio: 15300, categoria: "calzado", imagen: "/img/zapa.png", eliminado: false },
-        { id: 3, nombre: "pantalon", precio: 15000, categoria: "ropa", imagen: "/img/pant.png", eliminado: false },
-      ];
-
-      setProductos(ejemplo);
-      localStorage.setItem("productos", JSON.stringify(ejemplo));
+  const eliminarProductoFirebase = async (id) => {
+    try {
+      const ref = doc(db, "productos", id);
+      await updateDoc(ref, { eliminado: true });
+      cargarProductos();
+    } catch (error) {
+      console.error("Error eliminando producto:", error);
     }
+  };
+  const restaurarProductoFirebase = async (id) => {
+    try {
+      const ref = doc(db, "productos", id);
+      await updateDoc(ref, { eliminado: false });
+      cargarProductos();
+    } catch (error) {
+      console.error("Error restaurando producto:", error);
+    }
+  };
+  //cargar productos
+  useEffect(() => {
+    cargarProductos();
   }, []);
-
- 
   
-
 
   // -------------------------
   // RENDER
@@ -209,37 +261,13 @@ useEffect(() => {
           path="/admin/*"
           element={<ProtectedRoute setAdminLogueado={setAdminLogueado}>
            <AdminDashboard 
-           productos={productos}
-          agregarProducto={(p)=>{
-            const nuevos = [...productos, p];
-            setProductos (nuevos);
-            localStorage.setItem("productos", JSON.stringify(nuevos));
-
-          }}
-        actualizarProducto={(pActualizado)=> {
-          const nuevos = productos.map(p =>
-            p.id===pActualizado.id ? pActualizado : p
-          );
-          setProductos(nuevos);
-          localStorage.setItem("productos", JSON.stringify(nuevos));
-        }}
-      eliminarProducto={(id)=>{
-        const nuevos = productos.map(p =>
-          p.id===id ?  {...p, eliminado : true } : p
-        );
-        setProductos(nuevos);
-        localStorage.setItem("productos", JSON.stringify(nuevos));
- 
-      }}
-    restaurarProducto={(id)=>{
-      const nuevos = productos.map(p =>
-        p.id===id ?  {...p, eliminado : false } : p
-      );
-      setProductos(nuevos);
-      localStorage.setItem("productos", JSON.stringify(nuevos));
-
-    }}
+            productos={productos}
+            agregarProducto={agregarProducto}
+            eliminarProducto={eliminarProductoFirebase}
+            restaurarProducto={restaurarProductoFirebase}
+            actualizarProducto={actualizarProductoFirebase}
           />
+
           
           </ProtectedRoute>
           }

@@ -1,5 +1,7 @@
+import { serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 
 
 export default function AgregarProducto({ agregarProducto }) {
@@ -74,12 +76,13 @@ export default function AgregarProducto({ agregarProducto }) {
 
   
     const nuevoProducto = {
-      id: Date.now(),  // id único rápido
+      
       nombre,
       precio: Number(precio),
       imagen,
       categoria,
       eliminado: false,
+      
     };
   
     agregarProducto(nuevoProducto);

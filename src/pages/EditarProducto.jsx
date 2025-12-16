@@ -1,107 +1,142 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-export default function EditarProducto({ productos, actualizarProducto }) {
+export default function EditarProducto() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const producto = productos.find((p) => p.id === Number(id));
-
+  const [loading, setLoading] = useState(true);
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
   const [imagen, setImagen] = useState("");
-  const [descripcion, setDescripcion] = useState("");
+  const [categoria, setCategoria] = useState("");
+  const [subiendo, setSubiendo] = useState(false);
 
+  const CLOUD_NAME = "dy2lgqgk6";
+  const UPLOAD_PRESET = "tienda_upload";
+
+  // 🔹 Cargar producto
   useEffect(() => {
-    if (producto) {
-      setNombre(producto.nombre);
-      setPrecio(producto.precio);
-      setImagen(producto.imagen);
-      setDescripcion(producto.descripcion);
-    }
-  }, [producto]);
+    const cargar = async () => {
+      const ref = doc(db, "productos", id);
+      const snap = await getDoc(ref);
 
-  const handleSubmit = (e) => {
+      if (!snap.exists()) {
+        alert("Producto no encontrado");
+        navigate("/admin/productos");
+        return;
+      }
+
+      const p = snap.data();
+      setNombre(p.nombre);
+      setPrecio(p.precio);
+      setImagen(p.imagen || "");
+      setCategoria(p.categoria || "");
+      setLoading(false);
+    };
+
+    cargar();
+  }, [id, navigate]);
+
+  // 🔹 Subir nueva imagen
+  const subirImagen = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setSubiendo(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      { method: "POST", body: formData }
+    );
+
+    const data = await res.json();
+    setImagen(data.secure_url);
+    setSubiendo(false);
+  };
+
+  // 🔹 Guardar cambios
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const productoActualizado = {
-      ...producto,
+    if (precio <= 0) return alert("Precio inválido");
+
+    await updateDoc(doc(db, "productos", id), {
       nombre,
       precio: Number(precio),
       imagen,
-      descripcion,
-    };
+      categoria
+    });
 
-    actualizarProducto(productoActualizado);
-
-    alert("Producto actualizado con éxito");
+    alert("Producto actualizado");
     navigate("/admin/productos");
   };
 
-  if (!producto) return <p className="p-6">Producto no encontrado</p>;
+  if (loading) return <p className="p-6">Cargando...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-center">
-          Editar Producto
-        </h2>
+    <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow">
+      <h2 className="text-xl font-bold mb-4 text-center">Editar producto</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
 
-          <div>
-            <label className="block font-semibold mb-1">Nombre:</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          className="w-full p-2 border rounded"
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
 
-          <div>
-            <label className="block font-semibold mb-1">Precio:</label>
-            <input
-              type="number"
-              className="w-full p-2 border rounded"
-              value={precio}
-              onChange={(e) => setPrecio(e.target.value)}
-              required
-            />
-          </div>
+        <input
+          type="number"
+          className="w-full p-2 border rounded"
+          value={precio}
+          onChange={(e) => setPrecio(e.target.value)}
+          required
+        />
 
-          <div>
-            <label className="block font-semibold mb-1">Imagen (URL):</label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={imagen}
-              onChange={(e) => setImagen(e.target.value)}
-              required
-            />
-          </div>
+        <select
+          className="w-full p-2 border rounded"
+          value={categoria}
+          onChange={(e) => setCategoria(e.target.value)}
+          required
+        >
+          <option value="">Categoría</option>
+          <option value="ropa">Ropa</option>
+          <option value="calzado">Calzado</option>
+          <option value="accesorios">Accesorios</option>
+        </select>
 
-          <div>
-            <label className="block font-semibold mb-1">Descripción:</label>
-            <textarea
-              className="w-full p-2 border rounded"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-              rows="4"
-              required
-            ></textarea>
-          </div>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={subirImagen}
+        />
 
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 font-semibold"
-          >
-            Guardar cambios
-          </button>
+        {imagen && (
+          <img
+            src={imagen}
+            className="w-full h-40 object-cover rounded"
+            alt="preview"
+          />
+        )}
 
-        </form>
-      </div>
+        <button
+          disabled={subiendo}
+          className={`w-full p-2 rounded text-white ${
+            subiendo ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
+          }`}
+        >
+          {subiendo ? "Subiendo..." : "Guardar cambios"}
+        </button>
+
+      </form>
     </div>
   );
 }

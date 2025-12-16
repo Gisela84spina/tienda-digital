@@ -1,32 +1,52 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  query,
+  orderBy
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 export function useCarrusel() {
   const [imagenes, setImagenes] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const carruselRef = collection(db, "carrusel");
+
+  const cargar = async () => {
+    setLoading(true);
+    const q = query(carruselRef, orderBy("orden", "asc"));
+    const snapshot = await getDocs(q);
+
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    setImagenes(data);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem("carrusel")) || [];
-      setImagenes(
-        data.filter(img => typeof img === "object" && img.url)
-      );
-      
-    } catch {
-      setImagenes([]);
-    }
+    cargar();
   }, []);
 
-  const guardar = (lista) => {
-    setImagenes(lista);
-    localStorage.setItem("carrusel", JSON.stringify(lista));
+  const agregar = async (url) => {
+    await addDoc(carruselRef, {
+      url,
+      orden: imagenes.length + 1,
+      createdAt: new Date()
+    });
+    cargar();
   };
 
-  const agregar = (img) => {
-    guardar([...imagenes, img]);
+  const eliminar = async (id) => {
+    await deleteDoc(doc(db, "carrusel", id));
+    cargar();
   };
 
-  const eliminar = (id) => {
-    guardar(imagenes.filter(img => img.id !== id));
-  };
-
-  return { imagenes, agregar, eliminar };
+  return { imagenes, loading, agregar, eliminar };
 }

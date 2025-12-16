@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
+
+
 export default function Footer() {
+  
+
   return (
     <footer className="w-full bg-gradient-to-b from-gray-900 to-black text-gray-300 mt-20">
       

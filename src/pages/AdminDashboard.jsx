@@ -15,13 +15,7 @@ export default function AdminDashboard({
 
   const navigate = useNavigate();
 
-  // 🔐 PROTECCIÓN DE RUTA → si no está logueado, fuera del dashboard
-  useEffect(() => {
-    const logged = localStorage.getItem("adminLogged");
-    if (logged !== "true") {
-      navigate("/login");
-    }
-  }, []);
+ 
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
