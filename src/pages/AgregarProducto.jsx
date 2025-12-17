@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 export default function AgregarProducto({ agregarProducto }) {
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
-  const [imagen, setImagen] = useState("");
+  const [imagenes, setImagenes] = useState([]);
   
   const navigate = useNavigate();
   const CLOUD_NAME = "dy2lgqgk6";
@@ -40,7 +40,8 @@ export default function AgregarProducto({ agregarProducto }) {
       }
       
       const data = await res.json();
-      setImagen(data.secure_url);
+      setImagenes(prev => [...prev, data.secure_url]);
+
     } catch (error) {
       alert("Error subiendo imagen");
     } finally {
@@ -63,7 +64,7 @@ export default function AgregarProducto({ agregarProducto }) {
       return;
     }
     
-    if (!imagen) {
+    if (imagenes.length === 0) {
       alert("Esperá a que termine de subir la imagen");
       return;
     }
@@ -79,9 +80,10 @@ export default function AgregarProducto({ agregarProducto }) {
       
       nombre,
       precio: Number(precio),
-      imagen,
+      imagenes,
       categoria,
       eliminado: false,
+      createdAt: serverTimestamp()
       
     };
   
@@ -90,7 +92,7 @@ export default function AgregarProducto({ agregarProducto }) {
     // limpiar formulario
     setNombre("");
     setPrecio("");
-    setImagen("");
+    setImagenes([]);
     setCategoria("");
     
   
@@ -98,7 +100,7 @@ export default function AgregarProducto({ agregarProducto }) {
   
   
     // ACÁ vamos a agregar la lógica
-    console.log("Producto listo para agregar:", { nombre, precio, imagen, categoria });
+    console.log("Producto listo para agregar:", { nombre, precio, imagenes, categoria });
     navigate("/");
   
 };
@@ -140,9 +142,9 @@ export default function AgregarProducto({ agregarProducto }) {
               onChange={handleImagenUpload}
               className="w-full p-2 border rounded"
             />
-            {imagen && (
+            {imagenes.length > 0 && (
   <img
-    src={imagen}
+    src={imagenes[imagenes.length - 1]}
     alt="preview"
     className="mt-4 w-full h-40 object-cover rounded"
   />
@@ -167,9 +169,9 @@ export default function AgregarProducto({ agregarProducto }) {
 
           <button
   type="submit"
-  disabled={!imagen || subiendo}
+  disabled={imagenes.length === 0 || subiendo}
   className={`w-full p-2 rounded-lg font-semibold transition
-    ${subiendo || !imagen
+    ${subiendo || imagenes.length === 0
       ? "bg-gray-400 cursor-not-allowed"
       : "bg-blue-600 hover:bg-blue-700 text-white"}
   `}

@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductPage from "./pages/ProductPage";
-import { useCarrusel } from "./hooks/useCarrusel";
+
 import { db } from "./firebase";
 
 import { 
@@ -33,17 +33,28 @@ function App() {
   const cargarProductos = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "productos"));
-      const lista = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        eliminado: doc.data().eliminado ?? false,
-      }));
+  
+      const lista = querySnapshot.docs.map(docu => {
+        const data = docu.data();
+  
+        return {
+          id: docu.id,
+          ...data,
+          eliminado: data.eliminado ?? false,
+          imagenes: Array.isArray(data.imagenes) && data.imagenes.length > 0
+            ? data.imagenes
+            : data.imagen
+              ? [data.imagen]
+              : []
+        };
+      });
   
       setProductos(lista);
     } catch (error) {
       console.error("Error cargando productos:", error);
     }
   };
+  
 
   const actualizarProductoFirebase = async (producto) => {
     try {
@@ -51,7 +62,7 @@ function App() {
       await updateDoc(ref, {
         nombre: producto.nombre,
         precio: producto.precio,
-        imagen: producto.imagen,
+        imagenes: producto.imagenes ?? [],
         descripcion: producto.descripcion ?? "",
         categoria: producto.categoria ?? ""
       });
@@ -174,7 +185,7 @@ useEffect(() => {
   💲 Precio unitario: $${item.precio}
   💰 Subtotal: $${item.precio * item.cantidad}
   🖼️ Imagen:
-  ${item.imagen || "Sin imagen"}`
+  ${item.imagenes?.[0] || "Sin imagen"}`
       )
       .join("\n\n----------------------\n\n");
   

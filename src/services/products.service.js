@@ -9,8 +9,17 @@ export async function cargarProductos() {
 
   const snapshot = await getDocs(q);
 
-  return snapshot.docs.map(doc => ({
+  return snapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
     id: doc.id,
-    ...doc.data(),
-  }));
+    ...data,
+    imagenes: data.imagenes?.length
+    ? data.imagenes
+    : data.imagenes
+      ? [data.imagen]
+      : []
+    };
+  });
 }
+

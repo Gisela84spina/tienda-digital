@@ -13,11 +13,25 @@ export default function ProductPage({ agregarAlCarrito }) {
       try {
         const ref = doc(db, "productos", id);
         const snap = await getDoc(ref);
+        const data = snap.data();
 
         if (!snap.exists()) {
           setProducto(null);
         } else {
-          setProducto({ id: snap.id, ...snap.data() });
+          let imagenes = [];
+
+if (Array.isArray(data.imagenes) && data.imagenes.length > 0) {
+  imagenes = data.imagenes;
+} else if (data.imagen) {
+  imagenes = [data.imagen];
+}
+
+setProducto({
+  id: snap.id,
+  ...data,
+  imagenes
+});
+
         }
       } catch (err) {
         console.error(err);
@@ -41,11 +55,25 @@ export default function ProductPage({ agregarAlCarrito }) {
     <div className="p-6 max-w-3xl mx-auto">
       <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
 
-        <img
-          src={producto.imagenes?.[0] || producto.imagen || "/placeholder.png"}
-          alt={producto.nombre}
-          className="w-60 h-60 object-cover rounded-lg mb-4"
-        />
+      <div className="flex gap-3 overflow-x-auto mb-4">
+  {producto.imagenes.length > 0 ? (
+    producto.imagenes.map((img, i) => (
+      <img
+        key={i}
+        src={img}
+        alt={`${producto.nombre}-${i}`}
+        className="w-60 h-60 object-cover rounded-lg flex-shrink-0"
+      />
+    ))
+  ) : (
+    <img
+      src="/placeholder.png"
+      alt="sin imagen"
+      className="w-60 h-60 object-cover rounded-lg"
+    />
+  )}
+</div>
+
 
         <h1 className="text-2xl font-semibold mb-2">{producto.nombre}</h1>
 
