@@ -94,7 +94,7 @@ export default function Home({ productos, agregarAlCarrito }) {
 
     <Link to={`/producto/${prod.id}`} className="flex flex-col items-center">
       <img
-        src={prod.imagen}
+        src={prod.imagenes?.[0]}
         alt={prod.nombre}
         className="w-28 h-28 object-cover mb-3"
       />

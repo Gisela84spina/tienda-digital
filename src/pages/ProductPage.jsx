@@ -42,7 +42,7 @@ export default function ProductPage({ agregarAlCarrito }) {
       <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
 
         <img
-          src={producto.imagen}
+          src={producto.imagenes?.[0] || "/placeholder.png"}
           alt={producto.nombre}
           className="w-60 h-60 object-cover rounded-lg mb-4"
         />
