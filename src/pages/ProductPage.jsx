@@ -1,28 +1,46 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function ProductPage({ agregarAlCarrito }) {
   const { id } = useParams();
   const [producto, setProducto] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("productos")) || [];
-    const found = data.find((p) => p.id === Number(id));
-    setProducto(found);
+    const cargarProducto = async () => {
+      try {
+        const ref = doc(db, "productos", id);
+        const snap = await getDoc(ref);
+
+        if (!snap.exists()) {
+          setProducto(null);
+        } else {
+          setProducto({ id: snap.id, ...snap.data() });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarProducto();
   }, [id]);
 
+  if (loading) {
+    return <p className="text-center p-6">Cargando producto...</p>;
+  }
+
   if (!producto) {
-    return (
-      <p className="text-center text-gray-700 p-6 text-lg">
-        Cargando producto...
-      </p>
-    );
+    return <p className="text-center p-6">Producto no encontrado</p>;
   }
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
-        
+
         <img
           src={producto.imagen}
           alt={producto.nombre}
@@ -38,8 +56,6 @@ export default function ProductPage({ agregarAlCarrito }) {
         <p className="text-gray-600 mb-4">
           Categoría: <span className="font-medium">{producto.categoria}</span>
         </p>
-
-        <p className="text-gray-700 mb-6">{producto.descripcion}</p>
 
         <button
           onClick={() => agregarAlCarrito(producto)}

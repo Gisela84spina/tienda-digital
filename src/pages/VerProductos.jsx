@@ -108,7 +108,9 @@ export default function VerProductos() {
                 <td>{p.nombre}</td>
                 <td>${p.precio}</td>
                 <td>{p.eliminado ? "Eliminado" : "Activo"}</td>
-                <td className="flex gap-2">
+                <td>
+                 <div className="flex flex-col sm:flex-row gap-2 items-center justify-center">
+
                   {!p.eliminado && (
                     <Link
                       to={`/admin/editar/${p.id}`}
@@ -133,6 +135,8 @@ export default function VerProductos() {
                       Restaurar
                     </button>
                   )}
+
+                  </div>
                 </td>
               </tr>
             ))}
