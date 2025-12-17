@@ -108,8 +108,8 @@ export default function VerProductos() {
                 <td>{p.nombre}</td>
                 <td>${p.precio}</td>
                 <td>{p.eliminado ? "Eliminado" : "Activo"}</td>
-                <td>
-                 <div className="flex flex-col sm:flex-row gap-2 items-center justify-center">
+                <td className="px-2 py-2 w-[180px]">
+                 <div className="flex flex-wrap gap-2 justify-center">
 
                   {!p.eliminado && (
                     <Link
@@ -132,7 +132,7 @@ export default function VerProductos() {
                       onClick={() => restaurarProducto(p.id)}
                       className="bg-green-600 text-white px-2 rounded"
                     >
-                      Restaurar
+                      Reactivar
                     </button>
                   )}
 

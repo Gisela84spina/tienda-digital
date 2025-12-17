@@ -10,9 +10,10 @@ export default function EditarProducto() {
   const [loading, setLoading] = useState(true);
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
-  const [imagen, setImagen] = useState("");
+  
   const [categoria, setCategoria] = useState("");
   const [subiendo, setSubiendo] = useState(false);
+  const [imagenes, setImagenes] = useState([]);
 
   const CLOUD_NAME = "dy2lgqgk6";
   const UPLOAD_PRESET = "tienda_upload";
@@ -32,7 +33,7 @@ export default function EditarProducto() {
       const p = snap.data();
       setNombre(p.nombre);
       setPrecio(p.precio);
-      setImagen(p.imagen || "");
+      setImagenes(p.imagenes || []);
       setCategoria(p.categoria || "");
       setLoading(false);
     };
@@ -42,11 +43,13 @@ export default function EditarProducto() {
 
   // 🔹 Subir nueva imagen
   const subirImagen = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
     setSubiendo(true);
 
+for (const file of files) {
+   
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", UPLOAD_PRESET);
@@ -57,7 +60,8 @@ export default function EditarProducto() {
     );
 
     const data = await res.json();
-    setImagen(data.secure_url);
+    setImagenes(prev => [...prev, data.secure_url]);
+  }
     setSubiendo(false);
   };
 
@@ -70,7 +74,7 @@ export default function EditarProducto() {
     await updateDoc(doc(db, "productos", id), {
       nombre,
       precio: Number(precio),
-      imagen,
+      imagenes,
       categoria
     });
 
@@ -114,18 +118,26 @@ export default function EditarProducto() {
         </select>
 
         <input
-          type="file"
-          accept="image/*"
-          onChange={subirImagen}
-        />
+  type="file"
+  accept="image/*"
+  multiple
+  onChange={(e) => {
+    subirImagen(e);
+    e.target.value = null;
+  }}
+/>
 
-        {imagen && (
-          <img
-            src={imagen}
-            className="w-full h-40 object-cover rounded"
-            alt="preview"
-          />
-        )}
+
+<div className="flex gap-2 overflow-x-auto">
+  {imagenes.map((img, i) => (
+    <img
+      key={i}
+      src={img}
+      className="w-24 h-24 object-cover rounded"
+    />
+  ))}
+</div>
+
 
         <button
           disabled={subiendo}
