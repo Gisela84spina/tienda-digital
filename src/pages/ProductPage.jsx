@@ -55,8 +55,10 @@ setProducto({
     <div className="p-6 max-w-3xl mx-auto">
       <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
 
-      <div className="flex gap-3 overflow-x-auto mb-4 snap-x snap-proximity
-      cursor-grab ">
+      <div
+  className="flex gap-3 overflow-x-scroll snap-x snap-proximity mb-4"
+  style={{ WebkitOverflowScrolling: "touch" }}
+>
   {producto.imagenes.length > 0 ? (
     producto.imagenes.map((img, i) => (
       <img
@@ -74,6 +76,7 @@ setProducto({
     />
   )}
 </div>
+
 
 
         <h1 className="text-2xl font-semibold mb-2">{producto.nombre}</h1>
