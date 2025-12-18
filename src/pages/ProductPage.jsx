@@ -55,7 +55,7 @@ setProducto({
     <div className="p-6 max-w-3xl mx-auto">
       <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
 
-      <div className="flex gap-3 overflow-x-auto mb-4 scroll-smooth snap-x snap-mandatory
+      <div className="flex gap-3 overflow-x-auto mb-4 snap-x snap-proximity
       cursor-grab ">
   {producto.imagenes.length > 0 ? (
     producto.imagenes.map((img, i) => (
