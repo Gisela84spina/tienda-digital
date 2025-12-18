@@ -56,7 +56,7 @@ setProducto({
       <div className="bg-white shadow rounded-xl p-6 flex flex-col items-center">
 
       <div
-  className="flex gap-3 overflow-x-scroll snap-x snap-proximity mb-4"
+  className="w-full flex gap-3 overflow-x-scroll snap-x snap-proximity mb-4"
   style={{ WebkitOverflowScrolling: "touch" }}
 >
   {producto.imagenes.length > 0 ? (
@@ -65,7 +65,7 @@ setProducto({
         key={i}
         src={img}
         alt={`${producto.nombre}-${i}`}
-        className="w-60 h-60 object-cover rounded-lg flex-shrink-0 snap-center"
+        className="min-w-[240px] h-60 object-cover rounded-lg flex-shrink-0 snap-center"
       />
     ))
   ) : (
