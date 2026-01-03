@@ -5,6 +5,8 @@ import VerProductos from "../pages/VerProductos";
 import AgregarProducto from "../pages/AgregarProducto";
 import EditarProducto from "../pages/EditarProducto";
 import CarruselAdmin from "../components/CarruselAdmin";
+import AdminGlobitos from "../pages/AdminGlobitos";
+
 
 export default function AdminRoutes({
   productos,
@@ -43,9 +45,15 @@ export default function AdminRoutes({
       />
 
       <Route
-        path="carrusel"
-        element={<CarruselAdmin />}
+        path="/carruseles"
+        element={<CarruselAdmin productos= {productos} />}
       />
+
+      <Route 
+       path="globitos"
+       element={<AdminGlobitos />} 
+       />
+
     </Routes>
     </ProtectedRoute>
   );

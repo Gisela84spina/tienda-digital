@@ -3,7 +3,7 @@ import {
   collection,
   getDocs,
   addDoc,
-  deleteDoc,
+  updateDoc,
   doc,
   query,
   orderBy
@@ -11,22 +11,21 @@ import {
 import { db } from "../firebase";
 
 export function useCarrusel() {
-  const [imagenes, setImagenes] = useState([]);
+  const [carruseles, setCarruseles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const carruselRef = collection(db, "carrusel");
+  const ref = collection(db, "carrusel");
 
   const cargar = async () => {
     setLoading(true);
-    const q = query(carruselRef, orderBy("orden", "asc"));
-    const snapshot = await getDocs(q);
+    const q = query(ref, orderBy("orden", "asc"));
+    const snap = await getDocs(q);
 
-    const data = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const data = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(c => !c.eliminado);
 
-    setImagenes(data);
+    setCarruseles(data);
     setLoading(false);
   };
 
@@ -34,19 +33,52 @@ export function useCarrusel() {
     cargar();
   }, []);
 
-  const agregar = async (url) => {
-    await addDoc(carruselRef, {
-      url,
-      orden: imagenes.length + 1,
+  const agregarCarrusel = async (data) => {
+    await addDoc(ref, {
+      ...data,
+      eliminado: false,
       createdAt: new Date()
     });
     cargar();
   };
 
-  const eliminar = async (id) => {
-    await deleteDoc(doc(db, "carrusel", id));
+  const actualizarCarrusel = async (id, data) => {
+    await updateDoc(doc(db, "carrusel", id), data);
     cargar();
   };
 
-  return { imagenes, loading, agregar, eliminar };
+  const eliminarCarrusel = async (id) => {
+    await updateDoc(doc(db, "carrusel", id), { eliminado: true });
+    cargar();
+  };
+
+  const moverCarrusel = async (carrusel, direccion) => {
+    const indice = carruseles.findIndex(c => c.id === carrusel.id);
+    const destino =
+      direccion === "up" ? indice - 1 : indice + 1;
+  
+    if (destino < 0 || destino >= carruseles.length) return;
+  
+    const otro = carruseles[destino];
+  
+    await updateDoc(doc(db, "carrusel", carrusel.id), {
+      orden: otro.orden
+    });
+  
+    await updateDoc(doc(db, "carrusel", otro.id), {
+      orden: carrusel.orden
+    });
+  
+    cargar();
+  };
+  
+
+  return {
+    carruseles,
+    loading,
+    agregarCarrusel,
+    actualizarCarrusel,
+    eliminarCarrusel,
+    moverCarrusel
+  };
 }

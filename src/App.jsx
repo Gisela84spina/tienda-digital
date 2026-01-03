@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductPage from "./pages/ProductPage";
+import ListadoProductos from "./pages/ListadoProductos";
 
 import { db } from "./firebase";
 
@@ -25,8 +26,20 @@ import {
 function App() {
   const WHATSAPP_NUM = "5492364539044"; // numero de celular para wsp
   const [productos, setProductos] = useState([]);
+  const [globitos, setGlobitos] = useState([]);
 
- 
+ //globitos
+ const cargarGlobitos = async () => {
+  const snap = await getDocs(collection(db, "globitos"));
+
+  const lista = snap.docs
+    .map(d => ({ id: d.id, ...d.data() }))
+    .filter(g => !g.eliminado)
+    .sort((a, b) => a.orden - b.orden);
+
+  setGlobitos(lista);
+};
+
   // -------------------------
   // CARGAR PRODUCTOS
   // -------------------------
@@ -90,6 +103,12 @@ function App() {
   
   const [carrito, setCarrito] = useState([]);
   const [total, setTotal] = useState(0);
+
+  //globitos
+  useEffect(() => {
+    cargarGlobitos();
+  }, []);
+  
 
   // CARGAR CARRITO DESDE LOCALSTORAGE
 useEffect(() => {
@@ -229,6 +248,14 @@ useEffect(() => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
 
+
+{/* TOP BAR MINIMAL */}
+<div className="w-full bg-gray-100 text-center py-1">
+  <p className="text-[10px] tracking-widest text-gray-600 uppercase">
+    E-COMMERCE · FUNCIONAL · DIRECTO
+  </p>
+</div>
+
       <Header
         onCartOpen={() => {}}
         cartCount={carrito.reduce((sum, item) => sum + (item.cantidad ?? 1), 0)}
@@ -236,16 +263,29 @@ useEffect(() => {
 
     <main className="flex-1 w-full ">
 
+     
       <Routes>
-         <Route 
-           path="/" 
-           element={<Home productos={productos} agregarAlCarrito={agregarAlCarrito} />} 
-       />
 
-          <Route
-            path="/producto/:id"
-            element={<ProductPage agregarAlCarrito={agregarAlCarrito} />}
-          />
+      <Route
+  path="/"
+  element={<Home productos={productos} globitos={globitos} />}
+/>
+
+
+<Route
+  path="/productos"
+  element={
+    <ListadoProductos
+      productos={productos}
+      agregarAlCarrito={agregarAlCarrito}
+    />
+  }
+/>
+
+<Route
+  path="/producto/:id"
+  element={<ProductPage agregarAlCarrito={agregarAlCarrito} />}
+/>
 
 <Route
   path="/cart"
@@ -261,29 +301,29 @@ useEffect(() => {
   }
 />
 
+<Route
+  path="/login"
+  element={<Login setAdminLogueado={setAdminLogueado} />}
+/>
+
+<Route
+  path="/admin/*"
+  element={
+    <ProtectedRoute setAdminLogueado={setAdminLogueado}>
+      <AdminDashboard 
+        productos={productos}
+        agregarProducto={agregarProducto}
+        eliminarProducto={eliminarProductoFirebase}
+        restaurarProducto={restaurarProductoFirebase}
+        actualizarProducto={actualizarProductoFirebase}
+      />
+    </ProtectedRoute>
+  }
+/>
+
+</Routes>
 
 
-          <Route
-          path="/login"
-          element={<Login setAdminLogueado={setAdminLogueado} />}
-          />
-
-          <Route
-          path="/admin/*"
-          element={<ProtectedRoute setAdminLogueado={setAdminLogueado}>
-           <AdminDashboard 
-            productos={productos}
-            agregarProducto={agregarProducto}
-            eliminarProducto={eliminarProductoFirebase}
-            restaurarProducto={restaurarProductoFirebase}
-            actualizarProducto={actualizarProductoFirebase}
-          />
-
-          
-          </ProtectedRoute>
-          }
-          />
-        </Routes>
       </main>
 
       <Footer />

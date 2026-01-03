@@ -1,15 +1,38 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Header({ cartCount }) {
-  return (
-    <header className="flex justify-between items-center p-4 bg-gray-900 text-white">
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
-      {/* 🔥 Logo / título que envía al Home */}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+
+    navigate(`/productos?q=${encodeURIComponent(search)}`);
+    setSearch("");
+  };
+
+  return (
+    <header className="flex items-center justify-between p-4 bg-gray-900 text-white gap-4">
+      
+      {/* Logo */}
       <Link to="/" className="text-xl font-bold hover:text-gray-300 transition">
         Tienda Digital
       </Link>
 
-      {/* 🔥 Botón carrito */}
+      {/* Buscador */}
+      <form onSubmit={handleSubmit} className="flex-1 max-w-md">
+        <input
+          type="text"
+          placeholder="Buscar productos..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full px-3 py-2 rounded-lg text-black text-sm focus:outline-none"
+        />
+      </form>
+
+      {/* Carrito */}
       <Link
         to="/cart"
         className="relative bg-gray-700 px-3 py-2 rounded hover:bg-gray-600 transition"
@@ -21,9 +44,6 @@ export default function Header({ cartCount }) {
           </span>
         )}
       </Link>
-
     </header>
   );
 }
-
-  

@@ -40,6 +40,13 @@ export default function AdminDashboard({
             Agregar producto
           </Link>
 
+          <Link className="hover:text-gray-300" to="/admin/globitos">
+           Globitos
+          </Link>
+
+          <Link to="/admin/carruseles">Carruseles</Link>
+
+
           <Link className="hover:text-gray-300" to="/">
             Volver a la tienda
           </Link>
@@ -52,10 +59,6 @@ export default function AdminDashboard({
 >
   Cerrar sesión
 </button>
-
-<Link className="hover:text-gray-300" to="/admin/carrusel">
-  Carrusel
-</Link>
 
 
         </nav>
